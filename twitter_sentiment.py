@@ -28,10 +28,10 @@ API_ENDPOINT_URL = 'https://stream.twitter.com/1.1/statuses/filter.json'
 USER_AGENT = 'TwitterStream 1.0' # This can be anything really
 
 # You need to replace these with your own values
-OAUTH_KEYS = {'consumer_key': '<insert key>',
-              'consumer_secret': '<insert key>',
-              'access_token_key': '<insert key>',
-              'access_token_secret': '<insert key>'}
+OAUTH_KEYS = {'consumer_key': 'insertkey',
+              'consumer_secret': 'insertkey',
+              'access_token_key': 'insertkey',
+              'access_token_secret': 'insertkey'}
 
 # These values are posted when setting up the connection
 POST_PARAMS = {'include_entities': 0,
@@ -63,6 +63,8 @@ class TwitterStream:
         self.conn.setopt(pycurl.USERAGENT, USER_AGENT)
         
         # setup SSL certificate
+        self.conn.setopt(pycurl.SSLVERSION, 3)
+        self.conn.setopt(pycurl.SSL_CIPHER_LIST, 'SSLv3')		
         self.conn.setopt(pycurl.CAINFO, certifi.where())
 
         # Using gzip is optional but saves us bandwidth.
@@ -133,7 +135,7 @@ class TwitterStream:
             elif message.get('warning'):
                 print 'Got warning: %s' % message['warning'].get('message')
             else:
-                print 'Got tweet with text: %s' % message.get('text')
+                print 'Got tweet with text: %s' % message.get('text').encode("utf-8")
 
 
 if __name__ == '__main__':
