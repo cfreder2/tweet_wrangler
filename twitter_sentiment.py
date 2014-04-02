@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2012 Gustav Arngården
-
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -15,6 +13,10 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# Special thanks to Taewook Kang (taewook.kang@gmail.com) for his free natural-language-processing-service!
+# https://www.mashape.com/loudelement/free-natural-language-processing-service#!endpoint-nlp-text
+# This work was based on Gustav Arngården's work showing how to querying twitters stream service.
     
 import time
 import pycurl
@@ -22,22 +24,32 @@ import urllib
 import json
 import oauth2 as oauth
 import certifi
+import unirest
+import csv
 
 
 API_ENDPOINT_URL = 'https://stream.twitter.com/1.1/statuses/filter.json'
 USER_AGENT = 'TwitterStream 1.0' # This can be anything really
 
 # You need to replace these with your own values
-OAUTH_KEYS = {'consumer_key': 'insertkey',
-              'consumer_secret': 'insertkey',
-              'access_token_key': 'insertkey',
-              'access_token_secret': 'insertkey'}
+OAUTH_KEYS = {'consumer_key': 'Qa6CVgg5i06LptWXAkj7A',
+              'consumer_secret': 'MQ7MAxhmpkIpNoqFMFlZZ3Yo5Wnpcs63zDOh5IhLYNw',
+              'access_token_key': '1967945953-vtB5jUzRBsVmRcivUmGTAVUgu0vx91G3KXKo3xY',
+              'access_token_secret': 'KmJumdgH59Nzokdolq1uitOYmNl0BNlSTdxbeTAlPuKm0'}
 
 # These values are posted when setting up the connection
 POST_PARAMS = {'include_entities': 0,
                'stall_warning': 'true',
-               'track': 'hangover',
+               'track': 'cats, dogs',
                'langauge':'en'}
+
+#should we write to csv file?
+save_to_file = True
+
+if(save_to_file):
+    writer = csv.writer(open("tweets.csv", "a"), delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
+else:
+    writer = None
 
 class TwitterStream:
     def __init__(self, timeout=False):
@@ -118,6 +130,12 @@ class TwitterStream:
                 print 'Waiting %s seconds' % backoff_http_error
                 time.sleep(backoff_http_error)
                 backoff_http_error = min(backoff_http_error * 2, 320)
+    
+    def sentiment_callback(self, response):
+        if(response.code == 200):
+            print 'sentiment-score: %s sentiment-text: %s' % (response.body.get('sentiment-score',''), response.body.get('sentiment-text',''))
+        else:
+            print 'Bad response: %s' % response.code
 
     def handle_tweet(self, data):
         """ This method is called when data is received through Streaming endpoint.
@@ -135,7 +153,26 @@ class TwitterStream:
             elif message.get('warning'):
                 print 'Got warning: %s' % message['warning'].get('message')
             else:
-                print 'Got tweet with text: %s' % message.get('text').encode("utf-8")
+                timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(message['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
+                text = message.get('text','').replace('\n','').replace(',',' ').replace('"',' ') #remove pesky newlines and ',' and "
+                username = message.get('user','').get('name','')
+
+                if writer:
+                    myCsvRow = [timestamp, username.encode("utf-8"), text.encode("utf-8")]
+                    writer.writerow(myCsvRow)
+
+                #response = unirest.get("https://loudelement-free-natural-language-processing-service.p.mashape.com/nlp-text/?text=%s" % text,
+                #                headers={
+                #                        "X-Mashape-Authorization": "2GsJcMDj3CGWuIDuxPjLU4oqnO5IH0nx"
+                #                },
+                #                callback=self.sentiment_callback
+                #            );
+                
+                try:
+                    print '%s %s: %s' % (username.encode("utf-8"), timestamp, text.encode("utf-8")) #make it ascii so we can print to terminal. encode("utf-8"))
+                except():
+                    print 'Could not print tweet to console - unsupported character'
+
 
 
 if __name__ == '__main__':
