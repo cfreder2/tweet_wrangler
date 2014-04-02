@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # 
-# Special thanks to Taewook Kang (taewook.kang@gmail.com) for his free natural-language-processing-service!
 # https://www.mashape.com/loudelement/free-natural-language-processing-service#!endpoint-nlp-text
 # This work was based on Gustav Arngården's work showing how to querying twitters stream service.
     
@@ -24,32 +23,27 @@ import urllib
 import json
 import oauth2 as oauth
 import certifi
-import unirest
 import csv
-
 
 API_ENDPOINT_URL = 'https://stream.twitter.com/1.1/statuses/filter.json'
 USER_AGENT = 'TwitterStream 1.0' # This can be anything really
 
 # You need to replace these with your own values
-OAUTH_KEYS = {'consumer_key': 'Qa6CVgg5i06LptWXAkj7A',
-              'consumer_secret': 'MQ7MAxhmpkIpNoqFMFlZZ3Yo5Wnpcs63zDOh5IhLYNw',
-              'access_token_key': '1967945953-vtB5jUzRBsVmRcivUmGTAVUgu0vx91G3KXKo3xY',
-              'access_token_secret': 'KmJumdgH59Nzokdolq1uitOYmNl0BNlSTdxbeTAlPuKm0'}
+OAUTH_KEYS = {'consumer_key': 'insert your API key',
+              'consumer_secret': 'insert your API secret',
+              'access_token_key': 'insert your Access token',
+              'access_token_secret': 'insert your Access token secret'}
 
 # These values are posted when setting up the connection
+# Change the 'track' setting to stream other tweets.
+# Learn how 'track' works by going here: https://dev.twitter.com/docs/streaming-apis/keyword-matching
 POST_PARAMS = {'include_entities': 0,
                'stall_warning': 'true',
                'track': 'cats, dogs',
                'langauge':'en'}
 
 #should we write to csv file?
-save_to_file = True
-
-if(save_to_file):
-    writer = csv.writer(open("tweets.csv", "a"), delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
-else:
-    writer = None
+save_to_file = False
 
 class TwitterStream:
     def __init__(self, timeout=False):
@@ -153,25 +147,37 @@ class TwitterStream:
             elif message.get('warning'):
                 print 'Got warning: %s' % message['warning'].get('message')
             else:
+                #we got the tweet without error, parse out the most interesting fields
                 timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(message['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
                 text = message.get('text','').replace('\n','').replace(',',' ').replace('"',' ') #remove pesky newlines and ',' and "
-                username = message.get('user','').get('name','')
-
-                if writer:
-                    myCsvRow = [timestamp, username.encode("utf-8"), text.encode("utf-8")]
-                    writer.writerow(myCsvRow)
-
-                #response = unirest.get("https://loudelement-free-natural-language-processing-service.p.mashape.com/nlp-text/?text=%s" % text,
-                #                headers={
-                #                        "X-Mashape-Authorization": "2GsJcMDj3CGWuIDuxPjLU4oqnO5IH0nx"
-                #                },
-                #                callback=self.sentiment_callback
-                #            );
+                username = message.get('user','').get('screen_name','')
                 
-                try:
-                    print '%s %s: %s' % (username.encode("utf-8"), timestamp, text.encode("utf-8")) #make it ascii so we can print to terminal. encode("utf-8"))
-                except():
-                    print 'Could not print tweet to console - unsupported character'
+                #get geo data
+                '''
+                longitude = None
+                latitude = None
+                country = None
+                place_name = None
+                place_type = None
+
+                if(message['coordinates']):
+                    longitude =  message['coordinates']['coordinates'][0]
+                    latitude = message['coordinates']['coordinates'][1]
+                if(message['place']):
+                    country = message['place'].get('country','').encode("utf-8")
+                    place_name = message['place'].get('full_name','').encode("utf-8")
+                    place_type = message['place'].get('place_type','').encode("utf-8")
+       
+                myCsvRow = [timestamp, username.encode("utf-8"), text.encode("utf-8"), longitude, latitude, place_name, place_type, country]
+                '''
+
+                myCsvRow = [timestamp, username.encode("utf-8"), text.encode("utf-8")]
+                print(myCsvRow)
+
+                if(save_to_file):
+                    with open('tweets.csv', 'a') as outfile:
+                        writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
+                        writer.writerow(myCsvRow)
 
 
 
