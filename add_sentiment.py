@@ -20,12 +20,13 @@
 import unirest
 import csv
 
+Mashape_API_key = "insert your api key here"
 ##############################################
 #define function that performs sentiment analysis.  We'll use an API to help us here.
 def get_sentiment(text):
 	response = unirest.get("https://loudelement-free-natural-language-processing-service.p.mashape.com/nlp-text/?text=%s" % text,
                                 headers={
-                                        "X-Mashape-Authorization": "insert your mashape api key"
+                                        "X-Mashape-Authorization": Mashape_API_key
                                 }
                             );
 	sentiment_score = None
@@ -34,7 +35,7 @@ def get_sentiment(text):
 	if(response.code == 200):
 		sentiment_score = response.body.get('sentiment-score',0)
 		sentiment_text = response.body.get('sentiment-text','')
-		print '%s (%s) : %s' % (sentiment_text, sentiment_score, text.decode("utf-8"))
+		print '%s (%s)' % (sentiment_text, sentiment_score)
 	else:
 		print 'Server returned error: %s' % response.code
 
@@ -43,7 +44,7 @@ def get_sentiment(text):
 
 #open a new target file that we intend to store sentiment scores in.
 outfile = open('tweets_sentiment.csv', 'w')
-writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
+writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC, lineterminator='\n')
 
 #open our source csv file that contains tweet data.  In our case the tweet is in the third column of the CSV file (index starts at 0)
 with open('tweets.csv', 'r') as readfile:
