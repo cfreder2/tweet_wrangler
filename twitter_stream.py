@@ -182,7 +182,7 @@ class TwitterStream:
 
                 if(save_to_file):
                     with open('tweets.csv', 'a') as outfile:
-                        writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
+                        writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC, lineterminator='\n')
                         writer.writerow(myCsvRow)
 
 
