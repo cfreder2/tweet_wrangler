@@ -26,24 +26,25 @@ import certifi
 import csv
 
 API_ENDPOINT_URL = 'https://stream.twitter.com/1.1/statuses/filter.json'
+#API_ENDPOINT_URL = 'https://userstream.twitter.com/1.1/cfreder2.json' #userstream endpoint.
 USER_AGENT = 'TwitterStream 1.0' # This can be anything really
 
 # You need to replace these with your own values
-OAUTH_KEYS = {'consumer_key': 'insert your API key',
-              'consumer_secret': 'insert your API secret',
-              'access_token_key': 'insert your Access token',
-              'access_token_secret': 'insert your Access token secret'}
+OAUTH_KEYS = {'consumer_key': '<insert your key>',
+              'consumer_secret': '<insert your key>',
+              'access_token_key': '<insert your key>',
+              'access_token_secret': '<insert your key>'}
 
 # These values are posted when setting up the connection
 # Change the 'track' setting to stream other tweets.
 # Learn how 'track' works by going here: https://dev.twitter.com/docs/streaming-apis/keyword-matching
 POST_PARAMS = {'include_entities': 0,
                'stall_warning': 'true',
-               'track': 'cats, dogs',
+               'track': 'damn',
                'langauge':'en'}
 
 #should we write to csv file?
-save_to_file = False
+save_to_file = True
 
 class TwitterStream:
     def __init__(self, timeout=False):
@@ -150,10 +151,15 @@ class TwitterStream:
                 #we got the tweet without error, parse out the most interesting fields
                 timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(message['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
                 text = message.get('text','').replace('\n','').replace(',',' ').replace('"',' ') #remove pesky newlines and ',' and "
-                username = message.get('user','').get('screen_name','')
-                
+                username = message.get('user','').get('screen_name','').replace('\n','').replace(',',' ').replace('"',' ') 
+                profile_location = message.get('user','').get('location','').replace('\n','').replace(',',' ').replace('"',' ') 
+                profile_created_at = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(message.get('user','').get('created_at'),'%a %b %d %H:%M:%S +0000 %Y'))
+                statuses_count = message.get('user','').get('statuses_count','')
+                friends_count = message.get('user','').get('friends_count','')
+                followers_count = message.get('user','').get('followers_count','')
+                source = message.get('source','')
                 #get geo data
-                '''
+                
                 longitude = None
                 latitude = None
                 country = None
@@ -168,10 +174,10 @@ class TwitterStream:
                     place_name = message['place'].get('full_name','').encode("utf-8")
                     place_type = message['place'].get('place_type','').encode("utf-8")
        
-                myCsvRow = [timestamp, username.encode("utf-8"), text.encode("utf-8"), longitude, latitude, place_name, place_type, country]
-                '''
+                #myCsvRow = [timestamp, username.encode("utf-8"), text.encode("utf-8"), ]
+                
 
-                myCsvRow = [timestamp, username.encode("utf-8"), text.encode("utf-8")]
+                myCsvRow = [timestamp, username.encode("utf-8"), text.encode("utf-8"), profile_location.encode("utf-8"), statuses_count, friends_count, followers_count, profile_created_at, source, longitude, latitude, place_name, place_type, country]
                 print(myCsvRow)
 
                 if(save_to_file):
