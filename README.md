@@ -1,4 +1,3 @@
-
 Setup
 =================
 1. git clone https://github.com/cfreder2/twitter_sentiment
@@ -22,7 +21,7 @@ There are two files
 
 API KEY Setup
 -----------------------
--twitter_stream.py needs the twitter API keys and tokens (4 in all) to be entered.
--add_sentiment.py needs an API key from https://www.mashape.com/ to be entered.
+- twitter_stream.py needs the twitter API keys and tokens (4 in all) to be entered.
+- add_sentiment.py needs an API key from https://www.mashape.com/ to be entered.
 
 Compatable with python 2.7.X
