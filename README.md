@@ -17,7 +17,7 @@ There are two files
 *twitter_stream.py* - polls the twitter stream for a given "track".  by default it's find tweets that mention dogs or cats.   There is a flag you can flip to write to file in addition to printing to the screen.  It currently exports the data as a csv deliminated file, without headers.  The format of the file is:
 - "timestamp, username, tweet_text, profile_location, statuses_count, friends_count, followers_count, profile_created_at, source, longitude, latitude, place_name, place_type, country"
 
-*add_sentiment.py* - calls a sentiment anlysis api and appends the sentiment score to a new csv file.  This requires an 
+*add_sentiment.py* - calls a sentiment anlysis api and appends the sentiment score to a new csv file.  This uses https://www.mashape.com/loudelement/free-natural-language-processing-service#!documentation 
 
 API KEY Setup
 -----------------------
