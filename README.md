@@ -1,11 +1,10 @@
 
 
-
 Setup
 =================
 1. git clone https://github.com/cfreder2/twitter_sentiment
 
-2. Download and run pycurl-7.19.3.1.win-amd64-py2.7.exe for windows.  On mac simply: pip install pycurl
+2. Download and run pycurl-7.19.3.1.win-amd64-py2.7.exe for windows.  On mac run: pip install pycurl
      - http://www.lfd.uci.edu/~gohlke/pythonlibs/#pycurl
 
 3. pip install oauth2
@@ -21,4 +20,4 @@ There are two files
 
 *add_sentiment.py* - calls a sentiment anlysis api and appends the sentiment score to a new csv file.
 
-Requires python 2.6
+Compatable with python 2.7.X
