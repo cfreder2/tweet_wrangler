@@ -40,7 +40,7 @@ OAUTH_KEYS = {'consumer_key': '<insert your key>',
 # Learn how 'track' works by going here: https://dev.twitter.com/docs/streaming-apis/keyword-matching
 POST_PARAMS = {'include_entities': 0,
                'stall_warning': 'true',
-               'track': 'damn',
+               'track': 'cats,dogs',
                'langauge':'en'}
 
 #should we write to csv file?
