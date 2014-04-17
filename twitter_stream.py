@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # 
-# https://www.mashape.com/loudelement/free-natural-language-processing-service#!endpoint-nlp-text
 # This work was based on Gustav Arngården's work showing how to querying twitters stream service.
     
 import time
@@ -24,23 +23,18 @@ import json
 import oauth2 as oauth
 import certifi
 import csv
+import twitter_auth as auth_settings
 
 API_ENDPOINT_URL = 'https://stream.twitter.com/1.1/statuses/filter.json'
 #API_ENDPOINT_URL = 'https://userstream.twitter.com/1.1/cfreder2.json' #userstream endpoint.
 USER_AGENT = 'TwitterStream 1.0' # This can be anything really
 
-# You need to replace these with your own values
-OAUTH_KEYS = {'consumer_key': '<insert your key>',
-              'consumer_secret': '<insert your key>',
-              'access_token_key': '<insert your key>',
-              'access_token_secret': '<insert your key>'}
-
 # These values are posted when setting up the connection
 # Change the 'track' setting to stream other tweets.
-# Learn how 'track' works by going here: https://dev.twitter.com/docs/streaming-apis/keyword-matching
+
 POST_PARAMS = {'include_entities': 0,
                'stall_warning': 'true',
-               'track': 'cats,dogs',
+               'track': 'cats,dogs', # Learn how 'track' works by going here: https://dev.twitter.com/docs/streaming-apis/keyword-matching
                'langauge':'en'}
 
 #should we write to csv file?
@@ -48,8 +42,8 @@ save_to_file = True
 
 class TwitterStream:
     def __init__(self, timeout=False):
-        self.oauth_token = oauth.Token(key=OAUTH_KEYS['access_token_key'], secret=OAUTH_KEYS['access_token_secret'])
-        self.oauth_consumer = oauth.Consumer(key=OAUTH_KEYS['consumer_key'], secret=OAUTH_KEYS['consumer_secret'])
+        self.oauth_token = oauth.Token(key=auth_settings.OAUTH_KEYS['access_token_key'], secret=auth_settings.OAUTH_KEYS['access_token_secret'])
+        self.oauth_consumer = oauth.Consumer(key=auth_settings.OAUTH_KEYS['api_key'], secret=auth_settings.OAUTH_KEYS['api_secret'])
         self.conn = None
         self.buffer = ''
         self.timeout = timeout
@@ -150,14 +144,14 @@ class TwitterStream:
             else:
                 #we got the tweet without error, parse out the most interesting fields
                 timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(message['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
-                text = message.get('text','').replace('\n','').replace(',',' ').replace('"',' ') #remove pesky newlines and ',' and "
-                username = message.get('user','').get('screen_name','').replace('\n','').replace(',',' ').replace('"',' ') 
-                profile_location = message.get('user','').get('location','').replace('\n','').replace(',',' ').replace('"',' ') 
+                text = message.get('text','').replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8") #remove pesky newlines and ',' and "
+                username = message.get('user','').get('screen_name','').replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8")
+                profile_location = message.get('user','').get('location','').replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8")
                 profile_created_at = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(message.get('user','').get('created_at'),'%a %b %d %H:%M:%S +0000 %Y'))
                 statuses_count = message.get('user','').get('statuses_count','')
                 friends_count = message.get('user','').get('friends_count','')
                 followers_count = message.get('user','').get('followers_count','')
-                source = message.get('source','')
+                source = message.get('source','').encode("utf-8")
                 #get geo data
                 
                 longitude = None
@@ -177,7 +171,7 @@ class TwitterStream:
                 #myCsvRow = [timestamp, username.encode("utf-8"), text.encode("utf-8"), ]
                 
 
-                myCsvRow = [timestamp, username.encode("utf-8"), text.encode("utf-8"), profile_location.encode("utf-8"), statuses_count, friends_count, followers_count, profile_created_at, source, longitude, latitude, place_name, place_type, country]
+                myCsvRow = [timestamp, username, text, profile_location, statuses_count, friends_count, followers_count, profile_created_at, source, longitude, latitude, place_name, place_type, country]
                 print(myCsvRow)
 
                 if(save_to_file):
