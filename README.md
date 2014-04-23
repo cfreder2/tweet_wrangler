@@ -31,7 +31,8 @@ Tweets are gathered, parsed, and stored as a simple to process comma seperated f
 * Search for term cats OR dogs: `python tweet_wrangler.py --search cats,dogs`
 * Search for term cats OR dogs and *limit the results* to 20 tweets: `python tweet_wrangler.py --search cats,dogs --n 20` By default search only returns 100 tweets.  Twitter caps the search API at round 1500 tweets.
 * Stream tweets including the term cats OR dogs: `python tweet_wrangler.py --stream cats,dogs`
-* Stream tweets including the term cats *AND* dogs: `python tweet_wrangler.py --stream 'cats dogs'`
+* Stream tweets including the term cats *AND* dogs: `python tweet_wrangler.py --stream "cats dogs"`
+* These AND terms can also be comma separated, for example: `python tweet_wrangler.py --stream "cats dogs", "foo bar", "birds fish"`
 * By default tweets are written to tweets.csv.  use --f to change: `python tweet_wrangler.py --stream cats,dogs --f my_file.csv`
 * Header rows are not written by default, use --h to write a header row: `python tweet_wrangler.py --stream cats,dogs --h --f my_file.csv`
 * If you stream or search and your output file already exists your new tweets will be appended to the end of that file.  In that case you may not want to write the header row, so simply leave off the --h flag.
