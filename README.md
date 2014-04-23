@@ -1,66 +1,56 @@
-Prerequisites
-=================
-Python 2.7.X
-Git
+### Prerequisites
+* Python 2.7.X
+* Git
 
-Setup from the command line
-=================
-1. git clone https://github.com/cfreder2/twitter_sentiment
+### Setup from the command line
+Get the source code
 
-2. pip install tweepy
+* `git clone http://github.com/cfreder2/twitter_sentiment`
 
-3. pip install clint
+Install required libraries for *tweet_wrangler.py*
 
-Only required for tweet_add_sentiment.py
-4. pip install textblob
+* `pip install tweepy`
 
-Only required for tweet_word_count.py
-5. python -m textblob.download_corpora
+* `pip install clint` or if an old version is already installed `pip install -U clint`
 
-Files
-=================
+Install required libraries for *tweet_add_sentiment.py*
 
-tweet_wrangler.py
------------------------
-tweet_wrangler can be used to collect tweets using the search or stream API.
-Tweets are gathered, parsed, and stored as a comma seperated file (csv).
+* `pip install textblob`
 
-Example Search Usage:
-    Search for term cats OR dogs:
-        python tweet_wrangler.py --search cats,dogs
-    To limit the # of search results returned to 20 (~1500 max, default = 100):
-        python tweet_wrangler.py --search cats,dogs --n 20
-Example Stream Usage:
-    Stream tweets including the term cats OR dogs:
-        python tweet_wrangler.py --stream cats,dogs
-    tream tweets including the term cats AND dogs:
-        python tweet_wrangler.py --stream 'cats dogs'
-Other Paramaters:
-    By default tweets are written to tweets.csv.  use --f to change:
-        python tweet_wrangler.py --stream cats,dogs --f my_file.csv
-    Use --h to write a header row. Example:
-        python tweet_wrangler.py --stream cats,dogs --h --f my_file.csv
+Install required libraries for *tweet_word_count.py*
 
-twitter_auth.py
------------------------
-twitter_auth.py contains contains your twitter API keys and tokens (4 in all) to be entered.
-You must enter your API keys from dev.twitter.com into this file before using tweet_wrangler.py
+* `python -m textblob.download_corpora`
 
-tweet_add_sentiment.py
------------------------
-tweet_add_sentiment opens a csv file created by tweet_wrangler and adds the following columns:
+### Documentation
+**twitter_auth.py** contains contains your twitter API keys and tokens (4 in all) to be entered.
+You must enter your API keys from dev.twitter.com into this file before using *tweet_wrangler.py*
+
+**tweet_wrangler.py** is used to collect tweets using Twitter's **search** or **stream** API.
+Tweets are gathered, parsed, and stored as a simple to process comma seperated file (csv).
+
+* Search for term cats OR dogs: `python tweet_wrangler.py --search cats,dogs`
+* Search for term cats OR dogs and *limit the results* to 20 tweets: `python tweet_wrangler.py --search cats,dogs --n 20` By default search only returns 100 tweets.  Twitter caps the search API at round 1500 tweets.
+* Stream tweets including the term cats OR dogs: `python tweet_wrangler.py --stream cats,dogs`
+* Stream tweets including the term cats *AND* dogs: `python tweet_wrangler.py --stream 'cats dogs'`
+* By default tweets are written to tweets.csv.  use --f to change: `python tweet_wrangler.py --stream cats,dogs --f my_file.csv`
+* Header rows are not written by default, use --h to write a header row: `python tweet_wrangler.py --stream cats,dogs --h --f my_file.csv`
+* If you stream or search and your output file already exists your new tweets will be appended to the end of that file.  In that case you may not want to write the header row, so simply leave off the --h flag.
+
+
+**tweet_add_sentiment.py** opens a csv file created by *tweet_wrangler.py* and adds the following columns:
 - polarity_score: a decimal number between -1 and 1
 - polarity_text:  nuetral = 0.2 to -0.2, positive > 0.2, negative < 0.2)
 - detected_language: (2 digit code) all tweets are convereted to english (en) before sentiment is calculated
 
 Example Usage without header row:
-    python tweet_add_sentiment.py --input_file tweets.csv --output_file tweets_sentiment.csv
-Example Usage with header row:
-    python tweet_add_sentiment.py --h --input_file tweets.csv --output_file tweets_sentiment.csv
 
-tweet_word_count.py
------------------------
-tweet_word_count requires a csv file created by tweet_add_sentiment.py as it's input.  Each word in a tweet becomes a new line in a fact table with the following columns.
+* `python tweet_add_sentiment.py --input_file tweets.csv --output_file tweets_sentiment.csv`
+    
+Example Usage with header row:
+
+* `python tweet_add_sentiment.py --h --input_file tweets.csv --output_file tweets_sentiment.csv`
+
+**tweet_word_count.py** requires a csv file created by *tweet_add_sentiment.py* as it's input.  Each word in a tweet becomes a new line in a fact table with the following columns.
 - date
 - word
 - frequency
@@ -68,15 +58,13 @@ tweet_word_count requires a csv file created by tweet_add_sentiment.py as it's i
 - polarity_text
 
 Example Usage without header row:
-    python tweet_word_frequency.py --input_file tweets_sentiment.csv --output_file tweet_word_frequency.csv
+
+* `python tweet_word_frequency.py --input_file tweets_sentiment.csv --output_file tweet_word_frequency.csv`
+
 Example Usage with header row:
-    python tweet_word_frequency.py --h --input_file tweets_sentiment.csv --output_file tweet_word_frequency.csv
+
+* `python tweet_word_frequency.py --h --input_file tweets_sentiment.csv --output_file tweet_word_frequency.csv`
+
 Try and only extract noun phrases:
-    python tweet_word_frequency.py --nouns --input_file tweets_sentiment.csv --output_file tweet_word_frequency.csv
 
-
-
-
-
-
-Compatable with python 2.7.X
+* `python tweet_word_frequency.py --nouns --input_file tweets_sentiment.csv --output_file tweet_word_frequency.csv`
