@@ -68,3 +68,7 @@ Example Usage with header row:
 Try and only extract noun phrases:
 
 * `python tweet_word_frequency.py --nouns --input_file tweets_sentiment.csv --output_file tweet_word_frequency.csv`
+
+**License**
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later versio
