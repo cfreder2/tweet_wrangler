@@ -5,7 +5,7 @@
 ### Setup from the command line
 Get the source code
 
-* `git clone http://github.com/cfreder2/twitter_sentiment`
+* `git clone http://github.com/cfreder2/tweet_wrangler`
 
 Install required libraries for *tweet_wrangler.py*
 
