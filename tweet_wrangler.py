@@ -47,8 +47,8 @@ def parseTweet(tweet):
     place_type = None
 
     if(tweet['coordinates']):
-        longitude =  message['coordinates']['coordinates'][0]
-        latitude = message['coordinates']['coordinates'][1]
+        longitude =  tweet['coordinates']['coordinates'][0]
+        latitude = tweet['coordinates']['coordinates'][1]
     if(tweet['place']):
         country = tweet['place'].get('country','').encode("utf-8")
         place_name = tweet['place'].get('full_name','').encode("utf-8")
