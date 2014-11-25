@@ -27,76 +27,82 @@ api = None
 outputfile = "tweets.csv"
 
 def parseTweet(tweet):
-    tweet = json.loads(tweet)
-    #we got the tweet without error, parse out the most interesting fields
-    timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
-    text = tweet.get('text','').replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8") #remove pesky newlines and ',' and "
-    username = tweet.get('user','').get('screen_name','').replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8")
-    profile_location = tweet.get('user','').get('location','').replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8")
-    profile_created_at = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet.get('user','').get('created_at'),'%a %b %d %H:%M:%S +0000 %Y'))
-    statuses_count = tweet.get('user','').get('statuses_count','')
-    friends_count = tweet.get('user','').get('friends_count','')
-    followers_count = tweet.get('user','').get('followers_count','')
-    source = tweet.get('source','').encode("utf-8")
-    #get geo data
+    try:
+        tweet = json.loads(tweet)
+        #we got the tweet without error, parse out the most interesting fields
+        timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
+        text = tweet.get('text','').replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8") #remove pesky newlines and ',' and "
+        username = tweet.get('user','').get('screen_name','').replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8")
+        profile_location = tweet.get('user','').get('location','').replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8")
+        profile_created_at = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet.get('user','').get('created_at'),'%a %b %d %H:%M:%S +0000 %Y'))
+        statuses_count = tweet.get('user','').get('statuses_count','')
+        friends_count = tweet.get('user','').get('friends_count','')
+        followers_count = tweet.get('user','').get('followers_count','')
+        source = tweet.get('source','').encode("utf-8")
+        #get geo data
     
-    longitude = None
-    latitude = None
-    country = None
-    place_name = None
-    place_type = None
+        longitude = None
+        latitude = None
+        country = None
+        place_name = None
+        place_type = None
 
-    if(tweet['coordinates']):
-        longitude =  tweet['coordinates']['coordinates'][0]
-        latitude = tweet['coordinates']['coordinates'][1]
-    if(tweet['place']):
-        country = tweet['place'].get('country','').encode("utf-8")
-        place_name = tweet['place'].get('full_name','').encode("utf-8")
-        place_type = tweet['place'].get('place_type','').encode("utf-8")
+        if(tweet['coordinates']):
+            longitude =  tweet['coordinates']['coordinates'][0]
+            latitude = tweet['coordinates']['coordinates'][1]
+        if(tweet['place']):
+            country = tweet['place'].get('country','').encode("utf-8")
+            place_name = tweet['place'].get('full_name','').encode("utf-8")
+            place_type = tweet['place'].get('place_type','').encode("utf-8")
 
-    myCsvRow = [timestamp, username, text, profile_location, statuses_count, friends_count, followers_count, profile_created_at, source, longitude, latitude, place_name, place_type, country]
-    print(myCsvRow)
+        myCsvRow = [timestamp, username, text, profile_location, statuses_count, friends_count, followers_count, profile_created_at, source, longitude, latitude, place_name, place_type, country]
+        print(myCsvRow)
 
-    with open(outputfile, 'a') as outfile:
-        writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC, lineterminator='\n')
-        writer.writerow(myCsvRow)
+        with open(outputfile, 'a') as outfile:
+            writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC, lineterminator='\n')
+            writer.writerow(myCsvRow)
+    except:
+        pass
 
 #gross logic duplication dealing with inconsistant objects returned by tweepy stream and search methods.
 #todo: not do this.
 def parseTweetObj(tweet):
-    timestamp = tweet.created_at
-    text = tweet.text.replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8") #remove pesky newlines and ',' and "
-    username = tweet.user.screen_name.replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8")
+    try:
+        timestamp = tweet.created_at
+        text = tweet.text.replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8") #remove pesky newlines and ',' and "
+        username = tweet.user.screen_name.replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8")
 
-    profile_location = tweet.user.location.replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8")
-    profile_created_at = tweet.user.created_at
-    statuses_count = tweet.user.statuses_count
-    friends_count = tweet.user.friends_count
-    followers_count = tweet.user.followers_count
-    source = tweet.source.encode("utf-8")
-    #get geo data
+        profile_location = tweet.user.location.replace('\n','').replace(',',' ').replace('"',' ').encode("utf-8")
+        profile_created_at = tweet.user.created_at
+        statuses_count = tweet.user.statuses_count
+        friends_count = tweet.user.friends_count
+        followers_count = tweet.user.followers_count
+        source = tweet.source.encode("utf-8")
+        #get geo data
     
-    longitude = None
-    latitude = None
-    country = None
-    place_name = None
-    place_type = None
+        longitude = None
+        latitude = None
+        country = None
+        place_name = None
+        place_type = None
 
-    if(tweet.coordinates):
-        print dict(tweet.coordinates)
-        longitude =  tweet.coordinates['coordinates'][0]
-        latitude = tweet.coordinates['coordinates'][1]
-    if(tweet.place):
-        country = tweet.place.country.encode("utf-8")
-        place_name = tweet.place.full_name.encode("utf-8")
-        place_type = tweet.place.place_type.encode("utf-8")
+        if(tweet.coordinates):
+            print dict(tweet.coordinates)
+            longitude =  tweet.coordinates['coordinates'][0]
+            latitude = tweet.coordinates['coordinates'][1]
+        if(tweet.place):
+            country = tweet.place.country.encode("utf-8")
+            place_name = tweet.place.full_name.encode("utf-8")
+            place_type = tweet.place.place_type.encode("utf-8")
 
-    myCsvRow = [timestamp, username, text, profile_location, statuses_count, friends_count, followers_count, profile_created_at, source, longitude, latitude, place_name, place_type, country]
-    print(myCsvRow)
+        myCsvRow = [timestamp, username, text, profile_location, statuses_count, friends_count, followers_count, profile_created_at, source, longitude, latitude, place_name, place_type, country]
+        print(myCsvRow)
 
-    with open(outputfile, 'a') as outfile:
-        writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC, lineterminator='\n')
-        writer.writerow(myCsvRow)
+        with open(outputfile, 'a') as outfile:
+            writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC, lineterminator='\n')
+            writer.writerow(myCsvRow)
+    except:
+        pass
 
 class StdOutListener(StreamListener):
     """ A listener handles tweets are the received from the stream.
@@ -183,7 +189,15 @@ if __name__ == '__main__':
         else:
             streamListener = StdOutListener()
             stream = Stream(auth, streamListener)
-            stream.filter(track=query_string)
+            while(True):
+                try:
+                    stream.filter(track=query_string)
+                except Exception as e:
+                    print e
+                    stream.disconnect()
+                    print "Error: sleeping for 5 seconds..."
+                    time.sleep(5)
+                    print "restarting stream..."
 
     except tweepy.TweepError, e:
         print colored.red('failed because of %s' % e.reason)
