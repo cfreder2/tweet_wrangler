@@ -65,13 +65,13 @@ with open(input_file, 'r') as readfile:
     	tweetBlob = TextBlob(tweet[2].decode('utf-8'))
 
     	#translate tweets to english in order to detect better detect sentiment polarity
-    	language = tweetBlob.detect_language()
+    	#language = tweetBlob.detect_language()
     	score = 0
-    	if language != "en":
-    		enTweet = tweetBlob.translate(from_lang=language, to='en')
-    		score = enTweet.sentiment.polarity
-    	else:
-    		score = tweetBlob.sentiment.polarity
+    	#if language != "en":
+    	#	enTweet = tweetBlob.translate(from_lang=language, to='en')
+    	#	score = enTweet.sentiment.polarity
+    	#else:
+    	score = tweetBlob.sentiment.polarity
 
     	text = "nuetral"
     	if score >= 0.2:
