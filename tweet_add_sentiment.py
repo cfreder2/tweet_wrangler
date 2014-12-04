@@ -58,7 +58,7 @@ with open(input_file, 'r') as readfile:
     tweets = csv.reader(readfile)
     if(header):
         tweet = tweets.next()
-        writer.writerow(tweet + ['polarity_score'] + ['polarity_text'] + ['detected_language'])
+        writer.writerow(tweet + ['polarity_score'] + ['polarity_text'])
     #for each tweet in our tweets array
     for tweet in tweets:
     	#call our function that determins sentiment
@@ -79,4 +79,4 @@ with open(input_file, 'r') as readfile:
     	elif score <= -.2:
     		text = "negative"
     	#write the resulting csv row to our new file
-    	writer.writerow(tweet + [score] + [text] + [language])
+    	writer.writerow(tweet + [score] + [text])
