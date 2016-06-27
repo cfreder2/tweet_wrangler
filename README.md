@@ -23,7 +23,7 @@ Install required libraries for *tweet_word_count.py*
 
 ### Documentation
 **twitter_auth.py** contains contains your twitter API keys and tokens (4 in all) to be entered.
-You must enter your API keys from dev.twitter.com into this file before using *tweet_wrangler.py*
+You must enter your API keys from https://apps.twitter.com/ into this file before using *tweet_wrangler.py*
 
 **tweet_wrangler.py** is used to collect tweets using Twitter's **search** or **stream** API.
 Tweets are gathered, parsed, and stored as a simple to process comma seperated file (csv).
