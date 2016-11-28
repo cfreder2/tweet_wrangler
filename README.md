@@ -3,7 +3,7 @@
 * Git
 
 ### Setup from the command line
-Get the source code
+Get the source code using "Git" or download and unzip the code.
 
 * `git clone http://github.com/cfreder2/tweet_wrangler`
 
