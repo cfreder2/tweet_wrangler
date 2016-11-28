@@ -1,5 +1,5 @@
 ### Prerequisites
-* Python 2.7.X
+* Python 2.7.X (Assuming Python in installed, from the command prompt type python -V)
 * Git
 
 ### Setup from the command line
