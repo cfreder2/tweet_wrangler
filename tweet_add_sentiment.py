@@ -73,7 +73,7 @@ with open(input_file, 'r') as readfile:
     	#else:
     	score = tweetBlob.sentiment.polarity
 
-    	text = "nuetral"
+    	text = "neutral"
     	if score >= 0.2:
     		text = "positive"
     	elif score <= -.2:
