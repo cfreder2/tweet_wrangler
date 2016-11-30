@@ -9,7 +9,8 @@ Get the source code using "Git" or [download](https://github.com/cfreder2/tweet_
 
 Install required libraries for *tweet_wrangler.py*
 
-* `pip install tweepy`
+* `pip install tweepy
+if you have trouble with tweepy on OS X, use: sudo -H pip install tweepy --ignore-installed six`
 
 * `pip install clint` or if an old version is already installed `pip install -U clint`
 
